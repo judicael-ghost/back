@@ -14,6 +14,9 @@ import os
 import django_heroku
 from pathlib import Path
 
+import dj_database_url
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s$f4%pkt1@3vg%2di6ii_!o!cqbzc(#imns701o-p063n4*iw^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['app-kairos.herokuapp.com']
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
 
     'kairos.apps.KairosConfig',
     'utilisateur',
@@ -65,8 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]   
 
 ROOT_URLCONF = 'back.urls'
@@ -92,17 +95,17 @@ WSGI_APPLICATION = 'back.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd3vojff34ov16p',
-        'USER': 'ruherjrpfxyxkm',
-        'PASSWORD': 'b12e98c9c185dc605029b8e813c0d1cb5049fd64cd1a17b8426cc021d49f0756',
-        'HOST': 'ec2-3-237-55-96.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
-}
+DATABASES = {'default': dj_database_url.config()}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'd3vojff34ov16p',
+#         'USER': 'ruherjrpfxyxkm',
+#         'PASSWORD': 'b12e98c9c185dc605029b8e813c0d1cb5049fd64cd1a17b8426cc021d49f0756',
+#         'HOST': 'ec2-3-237-55-96.compute-1.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
 
 
 # Password validation
@@ -144,6 +147,7 @@ USE_TZ = True
 #STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR , 'staticfiles')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'back/static')]
 django_heroku.settings(locals())
 
 # Default primary key field type
@@ -158,3 +162,4 @@ CORS_ALLOW_CREDENTIALS= True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
